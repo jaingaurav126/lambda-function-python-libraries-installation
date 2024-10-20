@@ -1,0 +1,68 @@
+step1:create an IAM user and get its access keys (testing-user)
+
+
+login into aws through vs code using iam user credentials
+aws configure
+
+Step 1: Set Up EC2 Instance
+Launch EC2 Instance:
+
+Go to the AWS EC2 Console.
+Click "Launch Instance."
+Choose Amazon Linux 2 AMI (for compatibility with AWS Lambda environment).
+Choose an instance type (e.g., t2.micro for free tier).
+Configure security groups:
+Allow SSH (port 22) from your IP address for connecting to the instance.
+Allow HTTP/HTTPS if needed for future use.
+Launch the instance and download the key pair.
+
+Connect to Your EC2 Instance:
+
+Open your terminal/command line.
+
+Navigate to the directory where your key pair file (.pem) is located.
+
+Connect to the EC2 instance using SSH:
+ssh -i "testing-lambda-lambda.pem" ec2-user@184.73.60.106
+
+
+
+
+Step 2: Set Up Python Environment on EC2
+Update the EC2 Instance:
+sudo yum update -y
+
+
+Install Python 3.8 (or the version you need):
+sudo amazon-linux-extras enable python3.8
+sudo yum install python3.8 -y
+
+
+Install pip for Python 3.8:
+sudo yum install python3-pip -y
+
+
+Verify Python and Pip:
+python3.8 --version
+pip3 --version
+
+
+Create a Virtual Environment:
+python3.8 -m venv env
+
+source env/bin/activate
+
+pip3.8 install numpy pandas
+
+zip -r layer.zip env/lib/python3.8/site-packages/*
+
+
+scp -i "testing-lambda-lambda.pem" ec2-user@184.73.60.106:/home/ec2-user/layer.zip .
+
+
+
+create a zip file with path as python/lib/python3.8/site-packages/
+
+upload it in aws layer console of lambda function
+
+paste the code in lambda_function wherein numpy and pandas is used and test it
